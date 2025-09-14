@@ -15,3 +15,32 @@ def numberThing(numberList, value):
         
 numberThing(numbersList,value)
     
+# Create a function that will organize our list of numbers from
+# least to greatest. 
+    
+unorderList= [ 23, 600, 4, 91, 22, 49]
+
+unorderList.sort(reverse= True)
+
+print(unorderList)
+
+# Organize list from least to greatest WITHOUT       
+# using sort()
+
+# Bubble Sort()
+
+# Algorithms -  essentially instructions for programs that are
+# measured by efficiency
+
+# Loop() --> the most basic algorithm - essentially repeats some
+# instructions. 
+
+def function():
+    for i in []:
+        print(i)
+
+hypothetical= []
+def loopFunctionManual():
+# go through each item 1 by 1
+# when it doesnt find the item, skip to next
+# when it finds it, print
