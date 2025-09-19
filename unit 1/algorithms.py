@@ -25,3 +25,16 @@ def reverseString(word):
     print(newWord)
 
 reverseString('anything')
+
+class car:
+    def __init__ (self, name, color, year):
+        self.name= name
+        self.color = color
+        self.year = year
+        self.used= False
+
+        def start_car():
+            print('car is on')
+
+        def turn_offcar():
+            print('car is off')
