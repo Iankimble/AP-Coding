@@ -8,6 +8,7 @@
 # - Once finished, submit your code to your repository using the source control 
 # button. Your commit should be "completed quiz 1."
 
+'note: all written responses should be written/ formatted as strings.'
 
 # 1. In your own words, describe the differences between a linear search and a 
 # binary search. Please write your response using complete sentences.
