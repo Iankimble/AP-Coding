@@ -42,6 +42,6 @@ listB = [1,40, 44, 55, 70, 93, 99, 134, 145, 150, 200, 244]
 # Once you've created your class, create 2 unique video game consoles.
 
 # 8. Create a class that will represent a video game for your console.
-# Your class should have 4 attributes and 3 methods.
-# ONCE You've created your class, create 2 unique video games. 
+# Your class should have 4 attributes and 3 methods objects.
+# ONCE You've created your class, create 2 unique video games objects.. 
 
