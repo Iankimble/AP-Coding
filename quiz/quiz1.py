@@ -13,17 +13,23 @@
 # 1. In your own words, describe the differences between a linear search and a 
 # binary search. Please write your response using complete sentences.
 
+"Linear search is going through an ordered array sequentially"
+"Binary search is a method of cutting an ordered list into halves"
+
 # 2. How many steps would it take to get to the desired number of 98 using linear search?
 # Please write your response using complete sentences.
 
 listA = [10,24,34,35,67,98,101]
+'6 linear steps'
 
 # 3. How many steps would it take to get to the desired number of 150 using a binary search?
 # Please write your response using complete sentences.
-listB = [1,40, 44, 55, 70, 93, 99, 134, 145, 150, 200, 244]
+listB = [ 50, 200, 244]
+"2 binary steps"
 
 # 4. In your own words describe what an algorithm is. 
 # Please write your response using complete sentences.
+'Concise list of instructions.'
 
 # 5. A person and their family is visiting a medical building. the medical building has
 # 10 floors. The patient that the person and their family is visiting is on the 7th floor 
@@ -31,6 +37,8 @@ listB = [1,40, 44, 55, 70, 93, 99, 134, 145, 150, 200, 244]
 # patient on the 7th floor. which big-O time complexity would best describe the steps it
 # would for them to get to the desired room and why? 
 # Please write your response using complete sentences.
+
+
 
 # 6. You and your friends are headed out to a party, as you're preparing to walk out the door to meet with
 # your pals, your realize you forgot your phone. you you can't remember exactly where you misplaced it 
