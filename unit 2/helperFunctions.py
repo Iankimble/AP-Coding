@@ -1,10 +1,4 @@
 import pandas as pd
-import nfl_data_py as nfl
-
-# Load 2024 NFL schedule data
-schedules = nfl.import_schedules([2024])
-weeklyStats = nfl.import_weekly_data([2024])
-pbp = nfl.import_pbp_data([2024])
 
 def get_team_records(year):
     games = nfl.import_schedules([year])
