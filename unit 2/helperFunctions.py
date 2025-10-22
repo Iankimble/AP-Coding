@@ -1,4 +1,6 @@
 import pandas as pd
+import nfl_data_py as nfl
+
 
 def get_team_records(year):
     games = nfl.import_schedules([year])
