@@ -2,6 +2,7 @@
 
 
 <b>Assignment for Thursday 10/23/25</b>
+
 Please read the following article, then create a new word document, name it “AI mental health” and answer the following questions. Please make sure your responses are 3-4 sentences long. When done please email / share it to ikimble@boyslatin.org
 
 [AI Psychosis](https://www.bbc.com/news/articles/c24zdel5j18o)
@@ -12,7 +13,10 @@ Please read the following article, then create a new word document, name it “A
 3. What is something that happens in a person’s life that could contribute to someone trusting and believing AI to be human?
 4. What kind of safety warnings or boundaries should exist for AI companions?
 
+---
+
 <b>Assignment for Friday 10/24/25</b>
+
 Please read the following article, then create a new word document, name it “AI mental health” and answer the following questions. Please make sure your responses are 3-4 sentences long. When done please email / share it to ikimble@boyslatin.org
 
 [AI Slop](https://time.com/7326718sora-2-ai-fake-videos-social-media/)
