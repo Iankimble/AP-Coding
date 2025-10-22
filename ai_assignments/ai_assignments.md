@@ -15,7 +15,7 @@ Please read the following article, then create a new word document, name it “A
 <b>Assignment for Friday 10/24/25</b>
 Please read the following article, then create a new word document, name it “AI mental health” and answer the following questions. Please make sure your responses are 3-4 sentences long. When done please email / share it to ikimble@boyslatin.org
 
-[title](https://time.com/7326718/sora-2-ai-fake-videos-social-media/)
+[AI Slop](https://time.com/7326718sora-2-ai-fake-videos-social-media/)
 
 1. How is generative AI content made?
 2. How can you tell the difference between something made by a person and something made by AI?
