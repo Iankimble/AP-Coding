@@ -2,3 +2,6 @@ requirements.txt
 nfldata
 instructorDocs
 extras
+nflData
+quiz
+reports
