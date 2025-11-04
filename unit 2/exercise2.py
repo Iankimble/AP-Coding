@@ -55,10 +55,6 @@ print(team_6)
 # If they are not done entering in numbers it should allow 
 # them to enter another one.
 
-
-
-
-
 def pdCheck():
     print("Please enter a number")
     number = input()

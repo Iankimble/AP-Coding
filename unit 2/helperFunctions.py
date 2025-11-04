@@ -1,5 +1,7 @@
 import pandas as pd
 import nfl_data_py as nfl
+import matplotlib.pyplot as plt
+from typing import Dict, List, Optional
 
 def get_team_records(year):
     games = nfl.import_schedules([year])
@@ -184,3 +186,106 @@ def weeklyPlayerStats(year, position, week=None):
 
     return stats
 
+def _resolve_col(df: pd.DataFrame, col_name: str) -> str:
+    """Return the exact dataframe column matching col_name (case-insensitive)."""
+    lookup = {c.lower(): c for c in df.columns}
+    key = str(col_name).strip().lower()
+    if key in lookup:
+        return lookup[key]
+    # helpful error showing a few options
+    raise KeyError(
+        f"Column '{col_name}' not found. Available columns include: "
+        + ", ".join(list(df.columns)[:30])
+        + (" ..." if len(df.columns) > 30 else "")
+    )
+
+def plot_player_stat(
+    stats: pd.DataFrame,
+    stat: str,
+    top_n: int = 15,
+    title: str | None = None,
+    annotate: bool = True,
+    figsize=(10, 6),
+    save_path: str | None = None,
+):
+    """
+    Plot a horizontal bar chart from a weeklyPlayerStats dataframe for the chosen stat column.
+
+    Args:
+        stats (pd.DataFrame): output of weeklyPlayerStats(...)
+        stat (str): column name in `stats` to plot (case-insensitive)
+        top_n (int): number of players to show
+        title (str|None): optional chart title
+        annotate (bool): write values at the end of bars
+        figsize (tuple): figure size
+        save_path (str|None): if provided, save the figure to this path
+
+    Returns:
+        matplotlib.axes.Axes, pd.DataFrame (the data actually plotted)
+    """
+    # resolve column and coerce numeric
+    stat_col = _resolve_col(stats, stat)
+    df = stats.copy()
+
+    # Build a readable label "Player (TEAM)"
+    team_col = "recent_team" if "recent_team" in df.columns else None
+    if team_col is None:
+        # try common alternates, else blank
+        for cand in ("team", "posteam", "recent_team"):
+            if cand in df.columns:
+                team_col = cand
+                break
+    team_col = team_col or "recent_team"
+    if team_col not in df.columns:
+        df[team_col] = ""
+
+    df["label"] = (
+        df.get("player_name", pd.Series([""] * len(df))).fillna("")
+        + " ("
+        + df[team_col].fillna("")
+        + ")"
+    ).str.strip()
+
+    # numeric & drop missing
+    df[stat_col] = pd.to_numeric(df[stat_col], errors="coerce")
+    plot_df = df.dropna(subset=[stat_col]).sort_values(stat_col, ascending=False).head(top_n)
+
+    # Basic plot
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.barh(plot_df["label"], plot_df[stat_col])
+    ax.invert_yaxis()  # highest at top
+
+    # Labels & title
+    ax.set_xlabel(stat_col)
+    ax.set_ylabel("Player")
+    if title is None:
+        title = f"Top {min(top_n, len(plot_df))} by {stat_col}"
+    ax.set_title(title)
+
+    # Annotations
+    if annotate:
+        is_pct = "pct" in stat_col.lower()  # e.g., cmp_pct
+        for i, v in enumerate(plot_df[stat_col].to_numpy()):
+            txt = f"{v:.1f}%" if is_pct else f"{v:.0f}" if float(v).is_integer() else f"{v:.2f}"
+            ax.text(v, i, f"  {txt}", va="center")
+
+    plt.tight_layout()
+
+    if save_path:
+        plt.savefig(save_path, dpi=200, bbox_inches="tight")
+
+    return ax, plot_df
+
+def plot_weekly_player_stats(
+    year: int,
+    position: str,
+    stat: str,
+    week=None,
+    **plot_kwargs,
+):
+    """
+    Convenience wrapper: runs weeklyPlayerStats(year, position, week) then plots `stat`.
+    plot_kwargs are forwarded to plot_player_stat (top_n, title, annotate, figsize, save_path).
+    """
+    stats = weeklyPlayerStats(year, position, week=week)
+    return plot_player_stat(stats, stat=stat, **plot_kwargs)
