@@ -289,3 +289,33 @@ def plot_weekly_player_stats(
     """
     stats = weeklyPlayerStats(year, position, week=week)
     return plot_player_stat(stats, stat=stat, **plot_kwargs)
+
+def get_position_columns(year: int = 2024, position: str = "QB") -> list[str]:
+    """
+    Return all available stat columns for a given position.
+
+    Args:
+        year (int): NFL season (default=2024)
+        position (str): Player position, e.g. "QB", "WR", "RB", "TE"
+
+    Returns:
+        list[str]: Sorted list of column names available for that position.
+    """
+    # Load weekly data
+    weekly = nfl.import_weekly_data([year])
+    
+    # Normalize position
+    pos = str(position).upper()
+    
+    # Filter by position (handle missing data)
+    filtered = weekly[weekly["position"].fillna("").str.upper() == pos]
+    
+    # If no data found for that position, warn and return all columns
+    if filtered.empty:
+        print(f"⚠️ No data found for position '{pos}' in {year}. Returning all columns.")
+        return sorted(list(weekly.columns))
+    
+    # Return sorted list of columns for that position
+    return sorted(list(filtered.columns))
+
+

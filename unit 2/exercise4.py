@@ -1,12 +1,20 @@
-from helperFunctions import weeklyPlayerStats, plot_weekly_player_stats, plot_player_stat
+from helperFunctions import weeklyPlayerStats, plot_player_stat, plot_weekly_player_stats, get_position_columns
 import matplotlib.pyplot as plt
 
-# 1) Using an existing stats dataframe:
-stats = weeklyPlayerStats(2024, "QB")  
-# plot_player_stat(stats, stat="passing_yards", top_n=20, title="QB Passing Yards (2024)", save_path="qb_passing_yards_2024.png"  )
+stats = weeklyPlayerStats(2024, "WR")  
+print(stats)
+plot_player_stat(stats, stat="rushing_tds", top_n=10, title="WR rushing TDs (2024)", save_path="WR_rushing_tds_2024.png"  )
+
+# You can copy and paste this code from the AP repo. the document is called exercise4.py
+# in the unit2 folder. 
+
+# Try to run the code above.
+
+# If you have an error with matplotlib raise your hand I will help you.
 
 # 2) One-liner wrapper:
-# plot_weekly_player_stats(2024, "WR", stat="receiving_yards", top_n=15, week=[1,2,3], save_path="wr_rec_yards_wk1-3.png")
+plot_weekly_player_stats(2024, "WR", stat="receiving_yards", top_n=15, week=[1,2,3], save_path="wr_rec_yards_wk1-3.png")
+
 
 # Use the new plot_player_stat() and plot_weekly_player_stats() to visualize the data into bar graphs and answer the following questions.
 
