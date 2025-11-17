@@ -1,8 +1,8 @@
-from helperFunctions import weeklyPlayerStats, plot_player_stat, plot_weekly_player_stats, get_position_columns
+from helperFunctions import weeklyPlayerStats, plot_player_stat, plot_weekly_player_stats, get_position_columns,get_player_stats_by_name
 import matplotlib.pyplot as plt
 
-stats = weeklyPlayerStats(2024, "RB")  
-print(stats)
+stats = weeklyPlayerStats(2024, "WR")  
+#print(stats)
 
 # plot_player_stat(stats, stat="rush_ypc", top_n=5, title="rb rushing per carry (2024)", save_path="RB_rushing_pyc_2024.png"  )
 
@@ -34,3 +34,13 @@ print(stats)
 # 3. Find the player with the highest total passing yards in 2024.
 
 # 4. Which player had the highest rushing yards in week 1 and in week 17?
+
+# Full season stats for Jalen Hurts in 2024 (QB), fuzzy match
+#hurts_2024 = get_player_stats_by_name(2024, "Hurts", "QB")
+
+# Exact name match
+hurts_2024_exact = get_player_stats_by_name(2024, "J.Hurts", "QB", exact=True)
+print(hurts_2024_exact)
+# Specific week (e.g., Week 3 only)
+hurts_week3 = get_player_stats_by_name(2024, "J.Hurts", "QB", week=3)
+#print(hurts_week3)

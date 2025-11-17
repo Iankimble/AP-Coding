@@ -567,7 +567,6 @@ def get_advanced_team_records(year: int, return_game_level: bool = False
 
     return records
 
-# visualize into graph
 def compare_two_teams_points(team_games, team_a, team_b):
     data_a = team_games[team_games["team"] == team_a].sort_values("week")
     data_b = team_games[team_games["team"] == team_b].sort_values("week")
@@ -584,7 +583,6 @@ def compare_two_teams_points(team_games, team_a, team_b):
     plt.legend()
     plt.tight_layout()
     plt.show()
-
 
 def plot_team_points_by_week(team_games, team):
     data = team_games[team_games["team"] == team].sort_values("week")
