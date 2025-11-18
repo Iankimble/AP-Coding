@@ -14,7 +14,7 @@ stats = weeklyPlayerStats(2024, "WR")
 # If you have an error with matplotlib raise your hand I will help you.
 
 # # 2) One-liner wrapper:
-# plot_weekly_player_stats(2024, "WR", stat="receiving_yards", top_n=15, week=[1,2,3], save_path="wr_rec_yards_wk1-3.png")
+plot_weekly_player_stats(2024, "WR", stat="receiving_yards", top_n=15, week=[1,2,3], save_path="wr_rec_yards_wk1-3.png")
 
 # Use the new plot_player_stat() and plot_weekly_player_stats() to 
 # visualize the data into bar graphs and answer the following questions.
