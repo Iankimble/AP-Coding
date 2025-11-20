@@ -375,7 +375,7 @@ def get_player_stats_by_name(
 def get_advanced_team_records(year: int, return_game_level: bool = False
     ) -> Union[pd.DataFrame, Tuple[pd.DataFrame, pd.DataFrame]]:
     """
-    Get team records plus advanced team performance stats.
+    Get team records plus advanced team performance stats (offense + defense).
 
     Args:
         year (int): NFL season (e.g., 2024)
@@ -387,7 +387,7 @@ def get_advanced_team_records(year: int, return_game_level: bool = False
     Returns:
         pandas.DataFrame OR (pandas.DataFrame, pandas.DataFrame):
             - records: one row per team with wins, losses, PF/PA, point diff, etc.
-            - team_games (optional): one row per team-game with metadata + advanced stats
+            - team_games (optional): one row per team-game with meta + advanced stats
     """
 
     # -------------------------
@@ -411,7 +411,6 @@ def get_advanced_team_records(year: int, return_game_level: bool = False
     # -------------------------
     # 2. Game metadata subset
     # -------------------------
-    # These columns may vary by version; we only keep ones that exist.
     meta_cols = [
         "game_id", "week", "gameday", "weekday", "gametime",
         "stadium", "roof", "surface", "temp", "wind",
@@ -453,12 +452,11 @@ def get_advanced_team_records(year: int, return_game_level: bool = False
     # --------------------------------------
     # 4. Load play-by-play & build advanced
     # --------------------------------------
-    # Limit to needed columns to keep memory sane
     pbp_cols = [
         "play_id",
         "game_id",
         "posteam",      # offensive team
-        "defteam",
+        "defteam",      # defensive team
         "yards_gained",
         "rush_attempt",
         "pass_attempt",
@@ -476,7 +474,8 @@ def get_advanced_team_records(year: int, return_game_level: bool = False
     # Keep only offensive plays that have a posteam
     pbp = pbp[~pbp["posteam"].isna()].copy()
 
-    team_game_advanced = (
+    # ---- OFFENSIVE STATS (by posteam) ----
+    team_game_off = (
         pbp.groupby(["game_id", "posteam"])
            .agg(
                plays=("play_id", "count"),
@@ -494,20 +493,52 @@ def get_advanced_team_records(year: int, return_game_level: bool = False
            )
            .reset_index()
     )
+    team_game_off["turnovers"] = (
+        team_game_off["interceptions"] + team_game_off["fumbles_lost"]
+    )
 
-    team_game_advanced["turnovers"] = (
-        team_game_advanced["interceptions"] + team_game_advanced["fumbles_lost"]
+    # ---- DEFENSIVE STATS (by defteam = yards allowed, etc.) ----
+    team_game_def = (
+        pbp.groupby(["game_id", "defteam"])
+           .agg(
+               def_plays=("play_id", "count"),
+               def_yards_allowed=("yards_gained", "sum"),
+               def_passing_yards_allowed=("passing_yards", "sum"),
+               def_rushing_yards_allowed=("rushing_yards", "sum"),
+               def_rush_attempts_faced=("rush_attempt", "sum"),
+               def_pass_attempts_faced=("pass_attempt", "sum"),
+               def_total_epa_allowed=("epa", "sum"),
+               def_avg_epa_allowed=("epa", "mean"),
+               def_success_rate_allowed=("success", "mean"),
+               # From the defense's POV, these are TAKEAWAYS
+               def_interceptions=("interception", "sum"),
+               def_fumbles_forced=("fumble_lost", "sum"),
+               def_touchdowns_allowed=("touchdown", "sum"),
+           )
+           .reset_index()
+    )
+    team_game_def["def_takeaways"] = (
+        team_game_def["def_interceptions"] + team_game_def["def_fumbles_forced"]
     )
 
     # -----------------------------------------
     # 5. Merge basic team-games with advanced
     # -----------------------------------------
+    # Merge offensive stats
     team_games = team_games_basic.merge(
-        team_game_advanced,
+        team_game_off,
         left_on=["game_id", "team"],
         right_on=["game_id", "posteam"],
         how="left"
     ).drop(columns=["posteam"])
+
+    # Merge defensive stats (same row = same team, now as defteam)
+    team_games = team_games.merge(
+        team_game_def,
+        left_on=["game_id", "team"],
+        right_on=["game_id", "defteam"],
+        how="left"
+    ).drop(columns=["defteam"])
 
     # Add game metadata (stadium, roof, temp, spread, etc.)
     team_games = team_games.merge(
@@ -537,8 +568,8 @@ def get_advanced_team_records(year: int, return_game_level: bool = False
     records["point_diff"] = records["points_for"] - records["points_against"]
     records["win_pct"] = records["wins"] / records["games_played"]
 
-    # Add some aggregated advanced metrics
-    advanced_team_agg = (
+    # ---- OFFENSIVE TEAM-LEVEL AGGREGATES ----
+    advanced_off_agg = (
         team_games.groupby("team")
         .agg(
             total_yards=("total_yards", "sum"),
@@ -548,14 +579,36 @@ def get_advanced_team_records(year: int, return_game_level: bool = False
             total_epa=("total_epa", "sum"),
             avg_epa=("avg_epa", "mean"),
             success_rate=("success_rate", "mean"),
-            turnovers=("turnovers", "sum")
+            turnovers=("turnovers", "sum"),
         )
         .reset_index()
     )
 
-    records = records.merge(advanced_team_agg, on="team", how="left")
+    # ---- DEFENSIVE TEAM-LEVEL AGGREGATES ----
+    advanced_def_agg = (
+        team_games.groupby("team")
+        .agg(
+            def_plays=("def_plays", "sum"),
+            def_yards_allowed=("def_yards_allowed", "sum"),
+            def_passing_yards_allowed=("def_passing_yards_allowed", "sum"),
+            def_rushing_yards_allowed=("def_rushing_yards_allowed", "sum"),
+            def_total_epa_allowed=("def_total_epa_allowed", "sum"),
+            def_avg_epa_allowed=("def_avg_epa_allowed", "mean"),
+            def_success_rate_allowed=("def_success_rate_allowed", "mean"),
+            def_touchdowns_allowed=("def_touchdowns_allowed", "sum"),
+            def_takeaways=("def_takeaways", "sum"),
+        )
+        .reset_index()
+    )
 
-    # Sort like before
+    # Merge offensive + defensive advanced stats into records
+    records = (
+        records
+        .merge(advanced_off_agg, on="team", how="left")
+        .merge(advanced_def_agg, on="team", how="left")
+    )
+
+    # Sort standings
     records = records.sort_values(
         ["wins", "point_diff"], ascending=[False, False]
     ).reset_index(drop=True)
