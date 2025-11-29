@@ -9,10 +9,10 @@ import matplotlib.pyplot as plt
 
 #1. Which division had the strongest defense based on yards allowed per game in 2024?
 teamData = get_advanced_team_records(2024)
-# print(teamData)
+print(teamData)
 
 teamRes = get_season_Results_By_team(2024,'PHI')
-# print(teamRes)
+#print(teamRes)
 
 #2. Which WR had the most targets vs their receptions (catches) in 2024?
 
