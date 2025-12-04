@@ -5,49 +5,110 @@ import numpy as np
 
 def get_season_totals_by_position(year: int, position: str) -> pd.DataFrame:
     """
-    Return full-season stats for all players at a given position.
+    Return trimmed full-season stats for all players at a given position.
 
     Args:
         year (int): NFL season (e.g., 2024)
-        position (str): Player position (e.g., 'QB', 'RB', 'WR', 'TE')
+        position (str): Player position ('QB', 'RB', 'WR', 'TE', etc.)
 
     Returns:
-        pandas.DataFrame: One row per player with season-total stats.
+        pandas.DataFrame: One row per player with core season-total stats.
     """
     # Load weekly stats for the season
     weekly = nfl.import_weekly_data([year])
 
-    # Normalize position input
     pos = position.upper()
 
-    # Make sure the 'position' column exists
     if "position" not in weekly.columns:
         raise ValueError("Column 'position' not found in weekly data.")
 
     # Filter to the requested position
     pos_df = weekly[weekly["position"] == pos].copy()
-
-    # If nothing found, let the user know
     if pos_df.empty:
         raise ValueError(f"No data found for position '{pos}' in season {year}.")
 
-    # Grouping columns that identify a player
+    # Identify player columns
     group_cols = ["player_display_name", "player_id", "position", "recent_team"]
-
-    # Keep only columns that exist
     group_cols = [c for c in group_cols if c in pos_df.columns]
 
-    # Numeric columns to sum (yards, TDs, attempts, etc.)
-    numeric_cols = pos_df.select_dtypes(include="number").columns.tolist()
+    # Calculate games played per player
+    if "week" in pos_df.columns:
+        games_played = (
+            pos_df.groupby(group_cols)["week"]
+            .nunique()
+            .reset_index(name="games_played")
+        )
+    else:
+        # Fallback if week isn't available
+        games_played = (
+            pos_df.groupby(group_cols)
+            .size()
+            .reset_index(name="games_played")
+        )
 
-    # Group by player and sum numeric stats across all weeks
+    # Numeric columns to sum
+    numeric_cols = pos_df.select_dtypes(include="number").columns.tolist()
+    # Remove fantasy-related columns
+    fantasy_cols = [c for c in numeric_cols if "fantasy" in c.lower()]
+    numeric_cols = [c for c in numeric_cols if c not in fantasy_cols]
+
+    # Group by player and sum
     season_totals = (
         pos_df[group_cols + numeric_cols]
         .groupby(group_cols, as_index=False)[numeric_cols]
         .sum()
     )
 
-    # Optional: sort by a key stat depending on position
+    # Merge games_played
+    season_totals = season_totals.merge(games_played, on=group_cols, how="left")
+
+    # ---- Position-specific core columns ----
+    core_stats_by_pos = {
+        "QB": [
+            "games_played",
+            "attempts",
+            "completions",
+            "passing_yards",
+            "passing_tds",
+            "interceptions",
+            "rushing_yards",
+            "rushing_tds",
+        ],
+        "RB": [
+            "games_played",
+            "rushing_attempts",
+            "rushing_yards",
+            "rushing_tds",
+            "targets",
+            "receptions",
+            "receiving_yards",
+            "receiving_tds",
+        ],
+        "WR": [
+            "games_played",
+            "targets",
+            "receptions",
+            "receiving_yards",
+            "receiving_tds",
+        ],
+        "TE": [
+            "games_played",
+            "targets",
+            "receptions",
+            "receiving_yards",
+            "receiving_tds",
+        ],
+    }
+
+    # Choose which columns to keep
+    base_cols = group_cols.copy()
+    pos_core = core_stats_by_pos.get(pos, ["games_played"])
+    keep_cols = base_cols + [c for c in pos_core if c in season_totals.columns]
+
+    # Filter to trimmed set of columns
+    season_totals = season_totals[keep_cols]
+
+    # Sort by a key stat depending on position
     if pos == "QB" and "passing_yards" in season_totals.columns:
         season_totals = season_totals.sort_values("passing_yards", ascending=False)
     elif pos == "RB" and "rushing_yards" in season_totals.columns:
@@ -56,7 +117,6 @@ def get_season_totals_by_position(year: int, position: str) -> pd.DataFrame:
         season_totals = season_totals.sort_values("receiving_yards", ascending=False)
 
     return season_totals
-
 
 #qb_2024_totals_top5 = get_season_totals_by_position(2024, "QB")
 #print(qb_2024_totals_top5.head())
