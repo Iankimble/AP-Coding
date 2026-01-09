@@ -1,13 +1,12 @@
-def doMath():
-    result = 2 * 2
-    # print(result) 
-    return(result) # 4 is stuck here
+score = 70
 
-#doMath()
+if score > 70:
+  print("Pass")
 
-def addMath():
-    val = doMath() # this function returns 4
-    newRsult = val + 2 # 4+ 2
-    print(newRsult)
+else:
+  print("Fail")
 
-addMath()
+"A. PASS"
+"B. ERR - SOMETHING..."
+"C. ERR - CANT BE NEITHER PASS NOR FAIL"
+"D. THERE IS NO ERROR"
