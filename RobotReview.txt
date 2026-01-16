@@ -2,7 +2,6 @@ MOVE_FORWARD() — moves the robot forward one space
 TURN_LEFT() — turns the robot 90° left
 TURN_RIGHT() — turns the robot 90° right
 
-
 1. The robot starts at position (0,0) facing EAST.
 What is the robot’s final position and direction?
 
