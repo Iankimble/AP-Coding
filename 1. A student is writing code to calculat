@@ -1,0 +1,13 @@
+1. A student is writing code to calculate 
+the average of three numbers. 
+Which of the following code segments 
+will correctly assign the average 
+of the variables num1, num2, and num3 
+to the variable avg?
+
+A. avg <- (num1 + num2 + num3) / 3
+B. avg <- num1 + num2 + num3 / 3
+C. avg <- (num1 + num2 + num3) * 0.3
+D. avg <- 3 / (num1 + num2 + num3)
+
+doMath(1,2)

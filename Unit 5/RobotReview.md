@@ -1,0 +1,52 @@
+MOVE_FORWARD() — moves the robot forward one space
+TURN_LEFT() — turns the robot 90° left
+TURN_RIGHT() — turns the robot 90° right
+
+
+1. The robot starts at position (0,0) facing EAST.
+What is the robot’s final position and direction?
+
+MOVE_FORWARD()
+MOVE_FORWARD() 
+TURN_LEFT() 
+MOVE_FORWARD()
+
+2. The robot starts at (0,0) facing NORTH.
+Which best describes the robot’s final direction?
+
+REPEAT 3 TIMES {
+  MOVE_FORWARD()
+  TURN_RIGHT()
+}
+
+3. The robot starts at (2,2) facing EAST.
+What is the robot’s final position?
+
+TURN_RIGHT()
+MOVE_FORWARD()
+TURN_LEFT()
+MOVE_FORWARD()
+
+4. The goal is for the robot to move forward 3 spaces.
+How would you edit this code to accomplish this?
+
+REPEAT 3 TIMES {
+  TURN_LEFT()
+  MOVE_FORWARD()
+}
+
+5. A robot is placed on a grid at position (0, 0) facing EAST.
+The robot can use the following commands:
+
+MOVE_FORWARD() — moves the robot forward one space
+TURN_LEFT() — turns the robot 90° left
+TURN_RIGHT() — turns the robot 90° right
+
+Task:
+Write an algorithm that moves the robot from its starting position (0, 0) to the target position (5, 9).
+
+Your solution should:
+Use only the commands listed above
+Use loops where appropriate
+Clearly show the sequence of steps the robot follows
+
